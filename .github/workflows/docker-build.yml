@@ -6,7 +6,7 @@ name: Docker Build and Push
 # 언제 실행할지 정의
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     tags: [ 'v*' ]
   workflow_dispatch: # 수동 실행 가능
 
