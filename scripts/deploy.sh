@@ -684,7 +684,7 @@ check_authentication() {
 # 메인 실행
 main() {
     # help 명령어는 인증 확인 없이 실행
-    if [ "$DEPLOY_TARGET" = "help" ] || [ "$DEPLOY_TARGET" = "--help" ] || [ "$DEPLOY_TARGET" = "-h" ]; then
+    if [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
         show_help
         return
     fi
