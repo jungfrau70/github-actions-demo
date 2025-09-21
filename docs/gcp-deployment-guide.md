@@ -92,6 +92,7 @@ GitHub Repository → Settings → Secrets and variables → Actions에서 다�
 - `DOCKER_USERNAME`: Docker Hub 사용자명
 - `DOCKER_PASSWORD`: Docker Hub Personal Access Token
 
+
 ## 🚀 배포 실행
 
 ### 1. GitHub Actions를 통한 자동 배포
