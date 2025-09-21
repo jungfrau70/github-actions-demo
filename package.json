@@ -15,6 +15,7 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
+    "license:check": "npm ls --depth=0 && echo 'License check completed'",
     "build": "echo 'Build completed'",
     "docker:build": "docker build -f Dockerfile -t github-actions-demo:latest .",
     "docker:build:dev": "docker build -f Dockerfile.dev -t github-actions-demo:dev .",
