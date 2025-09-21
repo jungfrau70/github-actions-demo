@@ -1,0 +1,106 @@
+
+name: CI Pipeline  # 이 워크플로우의 이름
+
+# 🎯 언제 실행할까? (트리거 설정)
+on:
+  push:
+    branches: [ main, develop ]  # main, develop 브랜치에 코드를 올릴 때
+  pull_request:
+    branches: [ main ]           # main 브랜치로 PR을 올릴 때
+
+env:
+  NODE_VERSION: '18'  # 기본 Node.js 버전
+
+jobs:
+  # 🧪 1단계: 테스트 실행 (가장 중요!)
+  test:
+    name: 테스트 실행
+    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
+    
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]  # 3개 버전에서 모두 테스트
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4  # GitHub에서 코드를 가져오기
+      
+    - name: Node.js ${{ matrix.node-version }} 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'  # npm 캐시 사용으로 속도 향상
+        
+    - name: 의존성 설치
+      run: npm ci  # package-lock.json 기반으로 정확한 버전 설치
+      
+    - name: 린팅 실행
+      run: npm run lint  # 코드 스타일 검사
+      
+    - name: 테스트 실행
+      run: npm test  # 실제 테스트 실행
+      
+    - name: 테스트 결과 업로드
+      uses: actions/upload-artifact@v4
+      if: always()  # 테스트가 실패해도 결과 저장
+      with:
+        name: test-results-node-${{ matrix.node-version }}
+        path: test-results/
+        retention-days: 30
+
+  # 🏗️ 2단계: 애플리케이션 빌드
+  build:
+    name: 애플리케이션 빌드
+    runs-on: ubuntu-latest
+    needs: test  # 테스트가 성공한 후에만 실행
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 의존성 설치
+      run: npm ci
+      
+    - name: 애플리케이션 빌드
+      run: npm run build
+      
+    - name: 빌드 아티팩트 업로드
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          src/
+          package.json
+          package-lock.json
+        retention-days: 30
+
+  # 🔒 3단계: 보안 스캔 (안전성 확인)
+  security-scan:
+    name: 보안 스캔
+    runs-on: ubuntu-latest
+    needs: test  # 테스트가 성공한 후에만 실행
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 의존성 설치
+      run: npm ci
+      
+    - name: 보안 취약점 스캔
+      run: npm audit --audit-level moderate
+      
+    - name: 의존성 취약점 스캔
+      run: npx audit-ci --moderate
