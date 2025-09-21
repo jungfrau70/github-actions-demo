@@ -27,6 +27,9 @@ DAY_SCOPE[day1]="
 - 기본 CI 워크플로우 설정
 - Docker Hub 이미지 푸시
 - 기본 테스트 실행
+- AWS EC2 VM 배포
+- GCP Compute Engine VM 배포
+- 멀티 클라우드 자동화 배포
 "
 
 # Day 2: 고급 CI/CD 파이프라인 구축
@@ -135,6 +138,12 @@ GITHUB_REPO_NAME
 APP_PORT
 APP_HOST
 NODE_ENV
+AWS_VM_HOST
+AWS_VM_USERNAME
+AWS_VM_SSH_KEY
+GCP_VM_HOST
+GCP_VM_USERNAME
+GCP_VM_SSH_KEY
 "
 
 DAY_ENV_VARS[day2]="

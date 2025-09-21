@@ -49,6 +49,16 @@ check_environment() {
         exit 1
     fi
     
+    # AWS CLI 체크 (선택사항)
+    if ! command -v aws &> /dev/null; then
+        log_warning "AWS CLI가 설치되지 않았습니다. AWS 배포를 위해서는 AWS CLI가 필요합니다."
+    fi
+    
+    # GCP CLI 체크 (선택사항)
+    if ! command -v gcloud &> /dev/null; then
+        log_warning "GCP CLI가 설치되지 않았습니다. GCP 배포를 위해서는 GCP CLI가 필요합니다."
+    fi
+    
     log_success "환경 체크 완료!"
 }
 

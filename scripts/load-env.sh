@@ -65,6 +65,14 @@ validate_required_env() {
         "APP_PORT"
     )
     
+    # VM 배포 관련 변수 (선택사항)
+    local vm_vars=(
+        "AWS_VM_HOST"
+        "AWS_VM_USERNAME"
+        "GCP_VM_HOST"
+        "GCP_VM_USERNAME"
+    )
+    
     for var in "${required_vars[@]}"; do
         if [ -z "${!var}" ] || [ "${!var}" = "your_${var,,}" ] || [ "${!var}" = "your_${var,,}_here" ]; then
             missing_vars+=("$var")
