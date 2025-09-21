@@ -60,6 +60,7 @@ jobs:
         tags: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:dev
         labels: ${{ steps.meta.outputs.labels }}
         
+        
     - name: Docker 빌드 및 푸시 (테스트용)
       uses: docker/build-push-action@v5
       with:
