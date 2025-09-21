@@ -5,7 +5,7 @@ WORKDIR /app
 
 # 의존성 설치
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # 소스 코드 복사
 COPY . .

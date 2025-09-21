@@ -33,16 +33,16 @@ app.use(express.json());   // JSON 데이터를 쉽게 처리
 // 메트릭 수집 미들웨어
 app.use((req, res, next) => {
   const start = Date.now();
-  
+
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000; // 초 단위로 변환
     const route = req.route?.path || req.path;
-    
+
     // 요청 수 카운터 증가
     httpRequestsTotal
       .labels(req.method, route, res.statusCode)
       .inc();
-    
+
     // 요청 지속 시간 기록
     httpRequestDuration
       .labels(req.method, route, res.statusCode)
@@ -107,6 +107,7 @@ app.get('/metrics', async (req, res) => {
     const metrics = await register.metrics();
     res.end(metrics);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('메트릭 생성 오류:', error);
     res.status(500).end('메트릭 생성 실패');
   }
@@ -125,9 +126,11 @@ app.get('/api/status', (req, res) => {
 // 🚀 서버 시작 (테스트할 때는 제외)
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
+    // eslint-disable-next-line no-console
     console.log(`🚀 서버가 포트 ${port}에서 실행 중입니다.`);
+    // eslint-disable-next-line no-console
     console.log(`📊 헬스 체크: http://localhost:${port}/health`);
   });
 }
 
-module.exports = app;  // 테스트할 때 사용할 수 있도록 내보내기
+module.exports = app; // 테스트할 때 사용할 수 있도록 내보내기
