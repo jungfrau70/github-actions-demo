@@ -25,10 +25,9 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
         
     - name: 의존성 설치
-      run: npm ci
+      run: npm install
       
     - name: 코드 린팅
       run: npm run lint
@@ -49,10 +48,9 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
         
     - name: 의존성 설치
-      run: npm ci
+      run: npm install
       
     - name: 단위 테스트 실행
       run: npm run test:unit
@@ -81,10 +79,9 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
         
     - name: 의존성 설치
-      run: npm ci
+      run: npm install
       
     - name: 보안 취약점 스캔
       run: npm audit --audit-level moderate
