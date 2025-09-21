@@ -38,6 +38,9 @@ rebuild_docker_images() {
     # 기존 컨테이너 중지 및 제거
     docker-compose down --remove-orphans 2>/dev/null || true
     
+    # Docker 시스템 정리
+    docker system prune -f --volumes 2>/dev/null || true
+    
     # Docker 이미지 재빌드
     docker-compose build --no-cache
     
@@ -61,11 +64,11 @@ run_tests() {
 start_services() {
     log_info "4. Docker Compose 서비스 시작 중..."
     
-    # 서비스 시작
-    docker-compose up -d
+    # 서비스 시작 (강제 재생성)
+    docker-compose up -d --force-recreate
     
     # 서비스 상태 확인
-    sleep 10
+    sleep 15
     docker-compose ps
     
     log_success "Docker Compose 서비스 시작 완료"

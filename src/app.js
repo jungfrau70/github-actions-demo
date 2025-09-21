@@ -17,6 +17,15 @@ const httpRequestsTotal = new client.Counter({
   registers: [register]
 });
 
+// HTTP 요청 지속 시간 메트릭
+const httpRequestDuration = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status_code'],
+  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
+  registers: [register]
+});
+
 // 미들웨어 설정 (요청이 들어올 때마다 실행되는 코드)
 app.use(cors());           // 다른 도메인에서도 접근 가능하게
 app.use(express.json());   // JSON 데이터를 쉽게 처리
@@ -26,10 +35,18 @@ app.use((req, res, next) => {
   const start = Date.now();
   
   res.on('finish', () => {
-    const duration = Date.now() - start;
+    const duration = (Date.now() - start) / 1000; // 초 단위로 변환
+    const route = req.route?.path || req.path;
+    
+    // 요청 수 카운터 증가
     httpRequestsTotal
-      .labels(req.method, req.route?.path || req.path, res.statusCode)
+      .labels(req.method, route, res.statusCode)
       .inc();
+    
+    // 요청 지속 시간 기록
+    httpRequestDuration
+      .labels(req.method, route, res.statusCode)
+      .observe(duration);
   });
   
   next();
@@ -84,9 +101,15 @@ app.get('/health', (req, res) => {
 });
 
 // 📊 메트릭 엔드포인트 - Prometheus가 사용
-app.get('/metrics', (req, res) => {
-  res.set('Content-Type', register.contentType);
-  res.end(register.metrics());
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    const metrics = await register.metrics();
+    res.end(metrics);
+  } catch (error) {
+    console.error('메트릭 생성 오류:', error);
+    res.status(500).end('메트릭 생성 실패');
+  }
 });
 
 // 📊 API 상태 - 개발자나 모니터링 도구가 사용
