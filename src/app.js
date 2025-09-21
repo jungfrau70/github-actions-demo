@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const client = require('prom-client');
@@ -27,8 +26,8 @@ const httpRequestDuration = new client.Histogram({
 });
 
 // 미들웨어 설정 (요청이 들어올 때마다 실행되는 코드)
-app.use(cors());           // 다른 도메인에서도 접근 가능하게
-app.use(express.json());   // JSON 데이터를 쉽게 처리
+app.use(cors()); // 다른 도메인에서도 접근 가능하게
+app.use(express.json()); // JSON 데이터를 쉽게 처리
 
 // 메트릭 수집 미들웨어
 app.use((req, res, next) => {
@@ -39,9 +38,7 @@ app.use((req, res, next) => {
     const route = req.route?.path || req.path;
 
     // 요청 수 카운터 증가
-    httpRequestsTotal
-      .labels(req.method, route, res.statusCode)
-      .inc();
+    httpRequestsTotal.labels(req.method, route, res.statusCode).inc();
 
     // 요청 지속 시간 기록
     httpRequestDuration
@@ -94,8 +91,8 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
-    uptime: process.uptime(),        // 서버가 얼마나 오래 실행되었는지
-    memory: process.memoryUsage(),   // 메모리 사용량
+    uptime: process.uptime(), // 서버가 얼마나 오래 실행되었는지
+    memory: process.memoryUsage(), // 메모리 사용량
     timestamp: new Date().toISOString()
   });
 });
