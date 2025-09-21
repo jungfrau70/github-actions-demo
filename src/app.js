@@ -48,7 +48,7 @@ app.use((req, res, next) => {
       .labels(req.method, route, res.statusCode)
       .observe(duration);
   });
-  
+
   next();
 });
 

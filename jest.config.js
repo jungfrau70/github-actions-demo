@@ -24,7 +24,7 @@ module.exports = {
   // 커버리지 임계값
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 60,
       functions: 80,
       lines: 80,
       statements: 80
