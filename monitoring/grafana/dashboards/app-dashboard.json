@@ -1,0 +1,150 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "GitHub Actions Demo - 애플리케이션 대시보드",
+    "tags": ["github-actions-demo", "application"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "애플리케이션 상태",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"github-actions-demo-app\"}",
+            "legendFormat": "상태"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "CPU 사용률",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{name=\"github-actions-demo-app\"}[5m]) * 100",
+            "legendFormat": "CPU 사용률 %"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "CPU 사용률 (%)",
+            "min": 0,
+            "max": 100
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "메모리 사용률",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "container_memory_usage_bytes{name=\"github-actions-demo-app\"} / container_spec_memory_limit_bytes{name=\"github-actions-demo-app\"} * 100",
+            "legendFormat": "메모리 사용률 %"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "메모리 사용률 (%)",
+            "min": 0,
+            "max": 100
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "HTTP 요청률",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"github-actions-demo-app\"}[5m])",
+            "legendFormat": "요청/초"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "요청/초",
+            "min": 0
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "응답 시간",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job=\"github-actions-demo-app\"}[5m]))",
+            "legendFormat": "50% 응답시간"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"github-actions-demo-app\"}[5m]))",
+            "legendFormat": "95% 응답시간"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "응답시간 (초)",
+            "min": 0
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

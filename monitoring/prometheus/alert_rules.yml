@@ -1,0 +1,156 @@
+# Day3: Prometheus 알림 규칙
+# Day2의 다중 서비스 환경에 대한 알림 규칙 설정
+
+groups:
+  # 시스템 리소스 알림
+  - name: system_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 CPU 사용률 감지"
+          description: "{{ $labels.instance }}의 CPU 사용률이 {{ $value }}%를 초과했습니다."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 메모리 사용률 감지"
+          description: "{{ $labels.instance }}의 메모리 사용률이 {{ $value }}%를 초과했습니다."
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "디스크 공간 부족"
+          description: "{{ $labels.instance }}의 디스크 사용률이 {{ $value }}%를 초과했습니다."
+
+  # 컨테이너 알림
+  - name: container_alerts
+    rules:
+      - alert: ContainerDown
+        expr: up{job="github-actions-demo-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "컨테이너 다운"
+          description: "{{ $labels.instance }}의 애플리케이션 컨테이너가 다운되었습니다."
+
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total{name="github-actions-demo-app"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "컨테이너 높은 CPU 사용률"
+          description: "{{ $labels.instance }}의 애플리케이션 컨테이너 CPU 사용률이 {{ $value }}%를 초과했습니다."
+
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes{name="github-actions-demo-app"} / container_spec_memory_limit_bytes{name="github-actions-demo-app"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "컨테이너 높은 메모리 사용률"
+          description: "{{ $labels.instance }}의 애플리케이션 컨테이너 메모리 사용률이 {{ $value }}%를 초과했습니다."
+
+  # 애플리케이션 알림
+  - name: application_alerts
+    rules:
+      - alert: ApplicationDown
+        expr: up{job="github-actions-demo-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "애플리케이션 다운"
+          description: "{{ $labels.instance }}의 애플리케이션이 응답하지 않습니다."
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 에러율"
+          description: "{{ $labels.instance }}의 에러율이 {{ $value }}%를 초과했습니다."
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 응답 시간"
+          description: "{{ $labels.instance }}의 95% 응답 시간이 {{ $value }}초를 초과했습니다."
+
+  # 데이터베이스 알림
+  - name: database_alerts
+    rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "데이터베이스 다운"
+          description: "{{ $labels.instance }}의 PostgreSQL 데이터베이스가 다운되었습니다."
+
+      - alert: DatabaseHighConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 데이터베이스 연결 수"
+          description: "{{ $labels.instance }}의 데이터베이스 연결 수가 {{ $value }}%를 초과했습니다."
+
+  # Redis 알림
+  - name: redis_alerts
+    rules:
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis 다운"
+          description: "{{ $labels.instance }}의 Redis가 다운되었습니다."
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 Redis 메모리 사용률"
+          description: "{{ $labels.instance }}의 Redis 메모리 사용률이 {{ $value }}%를 초과했습니다."
+
+  # 네트워크 알림
+  - name: network_alerts
+    rules:
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx 다운"
+          description: "{{ $labels.instance }}의 Nginx가 다운되었습니다."
+
+      - alert: HighRequestRate
+        expr: rate(nginx_http_requests_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 요청률"
+          description: "{{ $labels.instance }}의 요청률이 {{ $value }} req/s를 초과했습니다."
