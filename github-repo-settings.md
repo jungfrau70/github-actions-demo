@@ -3,8 +3,8 @@ GitHub Repository의 Settings 페이지로 이동해야 합니다. 현재 개인
 ## �� GitHub Repository Settings로 이동하는 방법
 
 ### 1. Repository로 이동
-1. **GitHub 메인 페이지**에서 `jungfrau70/github-actions-demo` 저장소로 이동
-2. 또는 직접 URL 입력: `https://github.com/jungfrau70/github-actions-demo`
+1. **GitHub 메인 페이지**에서 `[github-userid]/github-actions-demo` 저장소로 이동
+2. 또는 직접 URL 입력: `https://github.com/[github-userid]/github-actions-demo`
 
 ### 2. Settings 탭 클릭
 Repository 페이지에서 상단 탭 중 **"Settings"**를 클릭하세요.
@@ -44,3 +44,15 @@ Settings 페이지에서:
 - **Secrets 설정**: `https://github.com/jungfrau70/github-actions-demo/settings/secrets/actions`
 
 이 링크들을 클릭하면 바로 Secrets 설정 페이지로 이동할 수 있습니다!
+
+### Secret 1: GCP_VM_HOST
+- **Name**: `GCP_VM_HOST`
+- **Secret**: GCP Compute Engine 인스턴스의 Public IP 주소
+
+### Secret 2: GCP_VM_SSH_KEY
+- **Name**: `GCP_VM_SSH_KEY`
+- **Secret**: SSH 키 전체 내용 (BEGIN부터 END까지)
+
+### Secret 3: GCP_VM_USERNAME
+- **Name**: `GCP_VM_USERNAME`
+- **Secret**: `inhwan.jung`
