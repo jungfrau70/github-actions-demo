@@ -17,16 +17,16 @@ Settings 페이지에서:
 
 ## �� 설정해야 할 GitHub Secrets
 
-### Secret 1: VM_HOST
-- **Name**: `VM_HOST`
+### Secret 1: AWS_VM_HOST
+- **Name**: `AWS_VM_HOST`
 - **Secret**: AWS EC2 인스턴스의 Public IP 주소
 
-### Secret 2: VM_USERNAME
-- **Name**: `VM_USERNAME`  
+### Secret 2: AWS_VM_USERNAME
+- **Name**: `AWS_VM_USERNAME`  
 - **Secret**: `ubuntu`
 
-### Secret 3: VM_SSH_KEY
-- **Name**: `VM_SSH_KEY`
+### Secret 3: AWS_VM_SSH_KEY
+- **Name**: `AWS_VM_SSH_KEY`
 - **Secret**: SSH 키 전체 내용 (BEGIN부터 END까지)
 
 ### Secret 4: DOCKER_USERNAME
